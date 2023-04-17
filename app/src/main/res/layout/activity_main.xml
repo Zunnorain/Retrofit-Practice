@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/glideIV"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/generateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Generate List"
+        app:layout_constraintEnd_toEndOf="@+id/glideIV"
+        app:layout_constraintStart_toStartOf="@+id/glideIV"
+        app:layout_constraintTop_toBottomOf="@+id/glideIV" />
+
+    <Button
+        android:id="@+id/generateTxtBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Generate Text"
+        app:layout_constraintEnd_toEndOf="@+id/generateText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/generateText"
+        app:layout_constraintTop_toBottomOf="@+id/generateText" />
+
+    <Button
+        android:id="@+id/generateImgBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Generate Image"
+        app:layout_constraintEnd_toEndOf="@+id/generateTxtBtn"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/generateTxtBtn"
+        app:layout_constraintTop_toBottomOf="@+id/generateTxtBtn" />
+
+    <Button
+        android:id="@+id/generateNewsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Generate News"
+        app:layout_constraintEnd_toEndOf="@+id/generateImgBtn"
+        app:layout_constraintStart_toStartOf="@+id/generateImgBtn"
+        app:layout_constraintTop_toBottomOf="@+id/generateImgBtn" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
