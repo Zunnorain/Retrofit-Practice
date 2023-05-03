@@ -6,26 +6,30 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.retrofitapi.adapters.NewsRVAdapter
 import com.example.retrofitapi.databinding.ActivityMainBinding
+import com.example.retrofitapi.newsly.NewsDataClass
 import com.example.retrofitapi.newsly.RetroInstance
 import com.example.retrofitapi.pixabay.RetrofitInstance
-import com.example.retrofitapi.todos.RetrofitInstance2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
 import java.io.IOException
-import java.util.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    lateinit var progressDialog:ProgressDialog
+    lateinit var progressDialog: ProgressDialog
+    lateinit var adapter: NewsRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        progressDialog=ProgressDialog(this@MainActivity)
+
+        progressDialog = ProgressDialog(this@MainActivity)
 
         //Generate Img
         binding.generateImgBtn.setOnClickListener {
@@ -44,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         //Generate News
         binding.generateNewsBtn.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                Log.d("TAGError", "onCreate: Error Thread ${Thread.currentThread().name}")
                 getNews()
             }
         }
@@ -65,11 +68,11 @@ class MainActivity : AppCompatActivity() {
         Log.d("TAGBody", "getData: ${body.toString()}")
 
         try {
-            val x = Math.random()*20
+            val x = Math.random() * 20
 
-            Glide.with(this@MainActivity)
-                .load(body?.hits?.get(x.toInt())?.largeImageURL)
-                .into(binding.glideIV)
+//            Glide.with(this@MainActivity)
+//                .load(body?.hits?.get(x.toInt())?.largeImageURL)
+//                .into(binding.glideIV)
 
             Toast.makeText(this@MainActivity, "Response is successful", Toast.LENGTH_SHORT).show()
             progressDialog.dismiss()
@@ -84,13 +87,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getData2() {
+    private fun getData2() {
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Data is being fetched")
         progressDialog.show()
 
         try {
-            binding.generateText.text = RetrofitInstance2.todoApi.getData().body()?.get(0)?.title
+//            binding.generateText.text = RetrofitInstance2.todoApi.getData().body()?.get(0)?.title
             Toast.makeText(this@MainActivity, "Response is successful", Toast.LENGTH_SHORT).show()
             progressDialog.dismiss()
 
@@ -107,16 +110,48 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            val news = RetroInstance.newsInterface.getNews("us", 1)
+
+            val x = Math.random() * 4
+
+            val news = RetroInstance.newsInterface.getNews("us", x.toInt())
+            Log.d("TAGRand", "Random: ${x.toInt()}")
+
             withContext(Dispatchers.Main) {
-                binding.generateText.text = news.body()?.articles?.get((Math.random()*20).toInt())?.title
+
+                news.enqueue(object : Callback<NewsDataClass> {
+                    override fun onResponse(
+                        call: Call<NewsDataClass>,
+                        response: retrofit2.Response<NewsDataClass>
+                    ) {
+                        val news2 = response.body()
+                        if (news2 != null) {
+                            adapter = NewsRVAdapter(this@MainActivity, news2.articles)
+
+//                        adapter = news.body()?.let { NewsRVAdapter(this@MainActivity, it.articles) }!!
+                            binding.newsRV.adapter = adapter
+                            binding.newsRV.layoutManager = LinearLayoutManager(this@MainActivity)
+                        } else {
+                            Toast.makeText(this@MainActivity, "Empty", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<NewsDataClass>, t: Throwable) {
+                        Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
                 progressDialog.dismiss()
             }
+
+//                binding.generateText.text = news.body()?.articles?.get((Math.random()*20).toInt())?.title
+
+//                val body : retrofit2.Response<NewsDataClass>
+//                val news2:NewsDataClass = Response.Builder().body(body).build()
+
 
             //            binding.generateText.text = news.body()?.title?.get(0).toString()
 
         } catch (e: IOException) {
-            Toast.makeText(this@MainActivity, "Error fetching news: ${e.message}", Toast.LENGTH_LONG).show()
+//            Toast.makeText(this, "Error fetching news: ${e.message}", Toast.LENGTH_LONG).show()
             Log.d("TAG500", "getNews: ${e.message}")
         }
 
